@@ -89,7 +89,7 @@ export default class Tail {
       // 需要过渡的距离（宽度）
       let transformWidth = Math.abs(
         currentLeft - prevLeft
-      ) + currentWidth;
+      ) + (dir === 'left' ? prevWidth : currentWidth);
       
       // 执行伸展过渡
       $tailEl.css({

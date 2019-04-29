@@ -1211,7 +1211,7 @@ function () {
         // 过渡方向
         var dir = currentI > prevI ? 'right' : 'left'; // 需要过渡的距离（宽度）
 
-        var transformWidth = Math.abs(currentLeft - prevLeft) + currentWidth; // 执行伸展过渡
+        var transformWidth = Math.abs(currentLeft - prevLeft) + (dir === 'left' ? prevWidth : currentWidth); // 执行伸展过渡
 
         $tailEl.css({
           left: dir === 'right' ? "".concat(prevLeft, "px") : 'auto',
