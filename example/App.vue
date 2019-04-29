@@ -16,10 +16,11 @@
   export default {
     name: 'app',
     mounted () {
-      new Tail({
+      window.tail = new Tail({
         relativeEl: '.nav',
         itemEl: '.nav-item',
-        event: 'mouseenter',
+        interesting: true,
+        defaultI: 1,
         tail: {
           color: 'red',
           height: '2px'

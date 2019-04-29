@@ -3,7 +3,8 @@ import $ from 'dom7/dist/dom7.min';
 const TAIL_DEFAULT = {
   color: '#000',
   height: '2px',
-  duration: 255
+  duration: 255,
+  className: ''
 };
 
 export default class Tail {
@@ -12,14 +13,16 @@ export default class Tail {
    *  @param { String | DOM } options.relativeEl            - 统一相对位置的父元素
    *  @param { String | DOM } options.itemEl                - 导航元素
    *  @param { String }       [options.event=click]         - 触发跟随事件名
-   *  @param { Boolean }      options.interesting           - 有趣的模式
+   *  @param { Boolean }      [options.interesting=false]   - 有趣的模式
    *  @param { Number }       [options.defaultI=0]          - 默认下标
    *  @param { Object }       [options.tail]                - 尾巴属性
+   *  @param { String }       [options.tail.className = ''] - tail 元素的 class
    *  @param { String }       [options.tail.color = #000]   - 尾巴颜色
    *  @param { String }       [options.tail.height = '2px'] - 尾巴高度
    *  @param { String }       [options.tail.duration = 255] - 尾巴高度
    **/
-  constructor ({ relativeEl, itemEl, event = 'click', defaultI = 0, tail = {} }) {
+  constructor ({ relativeEl, itemEl, event = 'click', interesting = false, defaultI = 0, tail = {} }) {
+    let my = this;
     let $relativeEl = $(relativeEl);
     let $itemEl = $relativeEl.find(itemEl);
     
@@ -30,7 +33,7 @@ export default class Tail {
     }
     
     // create tail dom
-    let $tailEl = $('<i>').css({
+    let $tailEl = $(`<i class="${ tail.className || TAIL_DEFAULT.className }">`).css({
       position: 'absolute',
       bottom: 0,
       backgroundColor: tail.color || TAIL_DEFAULT.color,
@@ -41,10 +44,10 @@ export default class Tail {
     // append
     $relativeEl.append($tailEl);
     
-    // 绑定事件
-    $itemEl.on(event, (e) => {
-      this.slideTo(
-        $itemEl.indexOf(e.target)
+    // 绑定导航触发事件
+    $itemEl.on(event, function () {
+      my.slideTo(
+        $itemEl.indexOf(this)
       );
     });
     
@@ -52,27 +55,69 @@ export default class Tail {
     this.$relativeEl = $relativeEl;
     this.$itemEl = $itemEl;
     this.$tailEl = $tailEl;
+    this.interesting = interesting;
+    this.currentI = defaultI;
+    this.duration = tail.duration || TAIL_DEFAULT.duration;
     
     // 移动默认位置
     this.slideTo(defaultI);
   };
   
   // 移动
-  slideTo (i) {
-    let { $tailEl, interesting } = this;
-    let $targetEl = this.$itemEl.eq(i);
-    let { offsetLeft, offsetTop, offsetWidth } = $targetEl[ 0 ];
+  slideTo (currentI) {
+    let { $relativeEl, $tailEl, $itemEl, interesting, duration, currentI: prevI } = this;
+    let $prevItemEl = this.$itemEl.eq(prevI);
+    let $currentItemEl = this.$itemEl.eq(currentI);
+    let { offsetWidth: relativeWidth } = $relativeEl[ 0 ];
+    let { offsetLeft: prevLeft, offsetWidth: prevWidth } = $prevItemEl[ 0 ];
+    let { offsetLeft: currentLeft, offsetWidth: currentWidth } = $currentItemEl[ 0 ];
+    
+    // 初始化时 和 重复点击同一导航时触发
+    // 设置 left 和 width
+    if (currentI === prevI) {
+      $tailEl.css({
+        left: `${ currentLeft }px`,
+        width: `${ currentWidth }px`
+      });
+      return false;
+    }
     
     // 有趣的模式
     if (interesting) {
-      // 待完成
+      // 过渡方向
+      let dir = currentI > prevI ? 'right' : 'left';
+      // 需要过渡的距离（宽度）
+      let transformWidth = Math.abs(
+        currentLeft - prevLeft
+      ) + currentWidth;
+      
+      // 执行伸展过渡
+      $tailEl.css({
+        left: dir === 'right' ? `${ prevLeft }px` : 'auto',
+        right: dir === 'left' ? `${ relativeWidth - prevLeft - prevWidth }px` : 'auto',
+        width: `${ transformWidth }px`
+      });
+      
+      // 伸展过渡结束后收回伸展
+      clearTimeout(this.transformTimer);
+      this.transformTimer = setTimeout(() => {
+        $tailEl.css({
+          left: dir === 'right' ? `${ currentLeft }px` : 'auto',
+          right: dir === 'left' ? `${ relativeWidth - currentLeft - currentWidth }px` : 'auto',
+          width: `${ currentWidth }px`
+        });
+      }, duration);
     }
+    
     // 常规模式
     else {
       $tailEl.css({
-        transform: `translate3d(${ offsetLeft }px, 0, 0)`,
-        width: `${ offsetWidth }px`
+        left: `${ currentLeft }px`,
+        width: `${ currentWidth }px`
       });
     }
+    
+    // 赋值下标
+    this.currentI = currentI;
   }
 }

@@ -1,10 +1,10 @@
 {
-  "name": "jason-leadto-alert",
-  "version": "1.0.4",
-  "main": "./dist/leadto-alert.umd.min.js",
+  "name": "jason-tail",
+  "version": "1.0.0",
+  "main": "./dist/jason-tail.umd.min.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vue-cli-service serve example/main.js",
-    "build": "cross-env NODE_ENV=production vue-cli-service build --target lib --name leadto-alert ./src/index.js & cross-env NODE_ENV=document vue-cli-service build ./example/main.js"
+    "build": "cross-env NODE_ENV=production vue-cli-service build --target lib --name jason-tail ./src/index.js & cross-env NODE_ENV=document vue-cli-service build ./example/main.js"
   },
   "dependencies": {
     "dom7": "^2.1.3"
