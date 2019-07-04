@@ -14,6 +14,11 @@ module.exports = {
       return 'other';
     }
   })(),
+  configureWebpack: {
+    output: {
+      libraryExport: 'default'
+    }
+  },
   css: {
     extract: false
   }

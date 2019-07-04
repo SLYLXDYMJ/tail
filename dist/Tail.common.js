@@ -1,14 +1,5 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["jason-tail"] = factory();
-	else
-		root["jason-tail"] = factory();
-})((typeof self !== 'undefined' ? self : this), function() {
-return /******/ (function(modules) { // webpackBootstrap
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -1262,6 +1253,5 @@ function () {
 
 /***/ })
 
-/******/ });
-});
-//# sourceMappingURL=jason-tail.umd.js.map
+/******/ })["default"];
+//# sourceMappingURL=Tail.common.js.map
