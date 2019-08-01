@@ -1,6 +1,8 @@
 # jason-tail
 > 有趣的导航小尾巴
 
+![./GIF.gif](./GIF.gif)
+
 ## File include
 ```html
 <script src="dist/Tail.umd.min.js"></script>
